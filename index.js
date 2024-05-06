@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const process = require("process");
 
-
 dotenv.config();
 
 const app = express();
