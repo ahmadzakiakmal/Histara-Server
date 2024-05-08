@@ -29,9 +29,15 @@ exports.registerUser = async (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(500).json({
-        message: "Failed to register user",
-        error: err.errorResponse.errmsg
-      });
+      if (err.errorResponse.code === 11000) {
+        return res.status(400).json({
+          message: "Error! Email or username already exists!"
+        });
+      } else {
+        return res.status(500).json({
+          message: "Failed to register user",
+          error: err.errorResponse.errmsg
+        });
+      }
     });
 };
