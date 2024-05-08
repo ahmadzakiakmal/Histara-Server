@@ -1,5 +1,9 @@
 const userRoutes = require("express").Router();
 
-userRoutes.post("/login", () => {
-  // IMPLEMENT LATER
-});
+const { hashPassword } = require("../middlewares/userMiddlewares");
+
+const { registerUser } = require("../controllers/userControllers");
+
+userRoutes.post("/register", hashPassword, registerUser);
+
+module.exports = userRoutes;
