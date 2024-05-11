@@ -31,14 +31,18 @@ exports.registerUser = async (req, res) => {
       });
     })
     .catch((err) => {
-      if (err.errorResponse.code === 11000) {
+      if (err.errorResponse && err.errorResponse.code === 11000) {
         return res.status(400).json({
-          message: "Error! Email or username already exists!"
+          message: "Error! Email or phone number already exists!",
+        });
+      } else if (err.message && err._message == "User validation failed") {
+        return res.status(409).json({
+          message: "Error! Enum validation failed!",
         });
       } else {
         return res.status(500).json({
           message: "Failed to register user",
-          error: err.errorResponse.errmsg
+          err: err 
         });
       }
     });
