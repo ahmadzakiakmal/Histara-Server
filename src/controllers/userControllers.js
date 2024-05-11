@@ -2,21 +2,23 @@ const User = require("../models/userModels");
 
 /*
 DESC        : Register a new user
-PARAMS      : email, username, name, phoneNumber, password, salt
+PARAMS      : email, name, phoneNumber, birthday, gender, work, password, salt
 METHOD      : POST
 VISIBILITY  : Public
 PRE-REQ     : create hashed password and generate salt using middlewares/register.js
 */
 exports.registerUser = async (req, res) => {
-  const { email, username, name, phoneNumber } = req.body;
+  const { email, name, phoneNumber, birthday, gender, work } = req.body;
   const password = req.password;
   const salt = req.salt;
 
   const newUser = new User({
     email,
-    username,
     name,
     phoneNumber,
+    birthday,
+    gender,
+    work,
     password,
     salt
   });
