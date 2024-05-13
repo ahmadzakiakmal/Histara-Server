@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema({
     enum: ["MAHASISWA", "SMA", "SMP", "SD", "PENGAJAR", "WIRASWASTA", "KARYAWAN", "LAINNYA"],
     required: true
   },
+  profilePicture: {
+    type: String,
+    default: ""
+  },
   password: {
     type: String,
     required: true
