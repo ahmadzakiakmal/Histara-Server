@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema({
   salt: {
     type: String,
     required: true
+  },
+  points: {
+    type: Number,
+    default: 0
   }
 });
 
