@@ -1,5 +1,13 @@
 const Tour = require("../models/tourModels");
 
+/*
+  DESC        : Get all tours
+  PARAMS      : -
+  METHOD      : GET
+  VISIBILITY  : Private
+  PRE-REQ     : -
+  RESPONSE    : All tours details
+*/
 exports.getAllTours = async (req, res) => {
   Tour.find()
     .then((tours) => {

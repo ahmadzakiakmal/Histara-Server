@@ -1,6 +1,14 @@
 const Transaction = require("../models/transactionModels");
 const Tour = require("../models/tourModels");
 
+/*
+  DESC        : Create transaction with empty payment
+  PARAMS      : tourId
+  METHOD      : POST
+  VISIBILITY  : Private
+  PRE-REQ     : -
+  RESPONSE    : -
+*/
 exports.createTransaction = async (req, res) => {
   const { tourId } = req.body;
 
