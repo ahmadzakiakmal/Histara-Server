@@ -37,6 +37,7 @@ app.get("/", (req, res) => {
   res.send("Histara Server");
 });
 app.use("/v1/user", require("./src/routes/userRoutes"));
+app.use("/v1/transaction", require("./src/routes/transactionRoutes"));
 
 // APP START
 app.listen(5000, () => {

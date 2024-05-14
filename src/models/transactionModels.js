@@ -19,16 +19,22 @@ const transactionSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  /*
+    Match with response from Midtrans API
+  */
   transactionTime: {
-    type: Date,
+    type: String,
+    default: "0000-00-00 00:00:00",
     required: true
   },
   paymentType: {
     type: String,
+    default: "qris",
     required: true
   },
   transactionStatus: {
     type: String,
+    default: "pending",
     required: true
   }
 });
