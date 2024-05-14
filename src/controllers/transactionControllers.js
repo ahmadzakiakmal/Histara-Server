@@ -74,6 +74,7 @@ exports.createPayment = async (req, res) => {
       .then((response) => {
         transaction.transactionTime = response.transaction_time;
         transaction.transactionStatus = response.transaction_status;
+        transaction.transactionQr = response.actions[0].url;
         transaction.save().then(() => {
           return res.status(200).json({
             message: "Payment created successfully",

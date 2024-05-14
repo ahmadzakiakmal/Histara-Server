@@ -32,6 +32,11 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     default: "pending",
     required: true
+  },
+  transactionQr: {
+    type: String,
+    default: " ",
+    required: true
   }
 });
 

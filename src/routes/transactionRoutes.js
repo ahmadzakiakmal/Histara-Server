@@ -10,10 +10,6 @@ const {
 
 transactionRoutes.post("/create", ensureAuthenticated, createTransaction);
 transactionRoutes.post("/create-payment", ensureAuthenticated, createPayment);
-transactionRoutes.get(
-  "/check-payment?orderId",
-  ensureAuthenticated,
-  checkPayment
-);
+transactionRoutes.get("/check-payment", ensureAuthenticated, checkPayment);
 
 module.exports = transactionRoutes;
