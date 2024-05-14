@@ -114,7 +114,10 @@ exports.checkPayment = async (req, res) => {
         transaction.transactionStatus = response.transaction_status;
         transaction.transactionTime = response.settlement_time;
         transaction.save().then(() => {
-          if(response.transaction_status === "settlement" || response.transaction_status === "capture") {
+          if (
+            response.transaction_status === "settlement" ||
+            response.transaction_status === "capture"
+          ) {
             return res.status(200).json({
               message: "Payment success!",
               response: response
