@@ -38,6 +38,7 @@ app.get("/", (req, res) => {
 });
 app.use("/v1/user", require("./src/routes/userRoutes"));
 app.use("/v1/transaction", require("./src/routes/transactionRoutes"));
+app.use("/v1/tour", require("./src/routes/tourRoutes"));
 
 // APP START
 app.listen(5000, () => {
