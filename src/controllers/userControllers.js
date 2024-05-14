@@ -106,7 +106,7 @@ exports.loginUser = async (req, res) => {
 exports.editUser = (req, res) => {
   const updates = req.body;
 
-  if ("password" in updates || "salt" in updates || "points" in updates || "profilePicture" in updates) {
+  if ("password" in updates || "salt" in updates || "profilePicture" in updates) {
     return res.status(400).json({
       message: "Field cannot be updated!"
     });
