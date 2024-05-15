@@ -39,6 +39,7 @@ app.get("/", (req, res) => {
 app.use("/v1/user", require("./src/routes/userRoutes"));
 app.use("/v1/transaction", require("./src/routes/transactionRoutes"));
 app.use("/v1/tour", require("./src/routes/tourRoutes"));
+app.use("/v1/point", require("./src/routes/pointRoutes"));
 
 // APP START
 app.listen(5000, () => {

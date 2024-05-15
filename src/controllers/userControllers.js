@@ -1,4 +1,5 @@
 const User = require("../models/userModels");
+const Points = require("../models/pointModel");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 
@@ -28,10 +29,24 @@ exports.registerUser = async (req, res) => {
 
   newUser
     .save()
-    .then(() => {
-      res.status(201).json({
-        message: "User registered successfully"
+    .then((newUserData) => {
+      const newPoints = new Points({
+        userId: newUserData._id
       });
+
+      newPoints
+        .save()
+        .then(() => {
+          res.status(201).json({
+            message: "User registered successfully"
+          });
+        })
+        .catch((err) => {
+          return res.status(500).json({
+            message: "Failed to register user!",
+            err: err
+          });
+        });
     })
     .catch((err) => {
       if (err.errorResponse && err.errorResponse.code === 11000) {
