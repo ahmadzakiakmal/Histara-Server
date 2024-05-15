@@ -37,6 +37,11 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     default: " ",
     required: true
+  },
+  isTransactionFinished: {
+    type: Boolean,
+    default: false,
+    required: true
   }
 });
 

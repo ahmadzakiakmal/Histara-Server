@@ -17,6 +17,18 @@ const tourSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  tourPoints: {
+    type: Number,
+    required: true
+  },
+  tourDuration: {
+    type: Number,
+    required: true
+  },
+  tourStops: {
+    type: Number,
+    required: true
+  },
 });
 
 const Tour = mongoose.model("Tour", tourSchema);

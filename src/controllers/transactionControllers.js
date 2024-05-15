@@ -1,5 +1,6 @@
 const Transaction = require("../models/transactionModels");
 const Tour = require("../models/tourModels");
+const Points = require("../models/pointModel");
 const { midtransCoreApi } = require("../config/midtrans");
 
 /*
@@ -138,4 +139,71 @@ exports.checkPayment = async (req, res) => {
         });
       });
   });
+};
+
+/*
+  DESC        : Finish transaction
+  PARAMS      : orderId
+  METHOD      : PUT
+  VISIBILITY  : Private
+  PRE-REQ     : -
+  RESPONSE    : -
+*/
+exports.finishTransaction = async (req, res) => {
+  const { orderId } = req.query;
+
+  Transaction.findOne({ _id: orderId })
+    .populate("tourId", "tourPoints")
+    .then((transaction) => {
+      if (!transaction) {
+        return res.status(404).json({
+          message: "Transaction not found"
+        });
+      } else if (transaction.isTransactionFinished === true) {
+        return res.status(406).json({
+          message: "Transaction already finished"
+        });
+      }
+
+      Points.findOne({ userId: req._id })
+        .then((points) => {
+          if (!points) {
+            return res.status(404).json({
+              message: "User points not found!"
+            });
+          }
+
+          points.points += transaction.tourId.tourPoints;
+          points
+            .save()
+            .then(() => {
+              transaction.isTransactionFinished = true;
+              transaction
+                .save()
+                .then(() => {
+                  return res.status(200).json({
+                    message: "Transaction finished successfully"
+                  });
+                })
+                .catch((err) => {
+                  return res.status(500).json({
+                    message: "Failed to finish transaction",
+                    err: err
+                  });
+                });
+            })
+            .catch((err) => {
+              return res.status(500).json({
+                message: "Failed to finish transaction",
+                err: err
+              });
+            });
+        })
+        .catch((err) => {
+          return res.status(500).json({
+            message: "Failed to finish transaction",
+            err: err
+          });
+        });
+    });
 };
