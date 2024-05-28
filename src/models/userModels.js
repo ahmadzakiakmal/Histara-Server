@@ -31,7 +31,16 @@ const userSchema = new mongoose.Schema({
   },
   work: {
     type: String,
-    enum: ["MAHASISWA", "SMA", "SMP", "SD", "PENGAJAR", "WIRASWASTA", "KARYAWAN", "LAINNYA"],
+    enum: [
+      "MAHASISWA",
+      "SMA",
+      "SMP",
+      "SD",
+      "PENGAJAR",
+      "WIRASWASTA",
+      "KARYAWAN",
+      "LAINNYA"
+    ],
     required: true
   },
   profilePicture: {
