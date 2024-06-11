@@ -78,7 +78,6 @@ exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   User.findOne({ email })
-    .select("password salt")
     .then((user) => {
       if (!user) {
         return res.status(404).json({
@@ -97,8 +96,15 @@ exports.loginUser = async (req, res) => {
         });
       } else {
         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+
+        const userResponse = { ...user._doc };
+        delete userResponse.password;
+        delete userResponse.salt;
+        delete userResponse._id;
+
         res.status(200).cookie("AuthToken", token).json({
-          message: "Login successful"
+          message: "Login successful",
+          user: userResponse
         });
       }
     })
