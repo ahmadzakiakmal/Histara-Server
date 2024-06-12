@@ -13,12 +13,26 @@ const { midtransCoreApi } = require("../config/midtrans");
 */
 exports.getAllTransactions = async (req, res) => {
   Transaction.find({ userId: req._id })
-    .select("_id tourId grossAmount transactionTime transactionStatus isTransactionFinished")
+    .select(
+      "_id tourId grossAmount transactionTime transactionStatus isTransactionFinished"
+    )
     .populate("tourId", "tourName touAddress tourDuration tourStops tourPoints")
     .then((transactions) => {
+      const formattedTransactions = transactions.map((transaction) => {
+        const { tourId, ...rest } = transaction.toObject();
+        return {
+          ...rest,
+          tourId: tourId._id,
+          tourName: tourId.tourName,
+          tourPoints: tourId.tourPoints,
+          tourDuration: tourId.tourDuration,
+          tourStops: tourId.tourStops
+        };
+      });
+
       res.status(200).json({
         message: "Success get all transactions",
-        transactions: transactions
+        transactions: formattedTransactions
       });
     })
     .catch((err) => {
