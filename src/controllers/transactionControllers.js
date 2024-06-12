@@ -16,7 +16,7 @@ exports.getAllTransactions = async (req, res) => {
     .select(
       "_id tourId grossAmount transactionTime transactionStatus isTransactionFinished"
     )
-    .populate("tourId", "tourName touAddress tourDuration tourStops tourPoints")
+    .populate("tourId", "tourName tourAddress tourDuration tourStops tourPoints")
     .then((transactions) => {
       const formattedTransactions = transactions.map((transaction) => {
         const { tourId, ...rest } = transaction.toObject();
@@ -26,7 +26,8 @@ exports.getAllTransactions = async (req, res) => {
           tourName: tourId.tourName,
           tourPoints: tourId.tourPoints,
           tourDuration: tourId.tourDuration,
-          tourStops: tourId.tourStops
+          tourStops: tourId.tourStops,
+          tourAddress: tourId.tourAddress
         };
       });
 
