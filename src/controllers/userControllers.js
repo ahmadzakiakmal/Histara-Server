@@ -97,15 +97,32 @@ exports.loginUser = async (req, res) => {
       } else {
         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
 
-        const userResponse = { ...user._doc };
-        delete userResponse.password;
-        delete userResponse.salt;
-        delete userResponse._id;
+        Points.findOne({ userId: user._id })
+          .select("points -_id")
+          .then((points) => {
+            if (!points) {
+              return res.status(404).json({
+                message: "User points not found!"
+              });
+            }
 
-        res.status(200).cookie("AuthToken", token).json({
-          message: "Login successful",
-          user: userResponse
-        });
+            const userResponse = { ...user._doc };
+            delete userResponse.password;
+            delete userResponse.salt;
+            delete userResponse._id;
+
+            res.status(200).cookie("AuthToken", token).json({
+              message: "Login successful",
+              user: userResponse,
+              points: points.points
+            });
+          })
+          .catch((err) => {
+            return res.status(500).json({
+              message: "Failed to fetch user points",
+              err: err
+            });
+          });
       }
     })
     .catch((err) => {
