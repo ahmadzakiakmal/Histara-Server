@@ -4,6 +4,32 @@ const Points = require("../models/pointModel");
 const { midtransCoreApi } = require("../config/midtrans");
 
 /*
+  DESC        : Get all transactions
+  PARAMS      : -
+  METHOD      : GET
+  VISIBILITY  : Private
+  PRE-REQ     : -
+  RESPONSE    : -
+*/
+exports.getAllTransactions = async (req, res) => {
+  Transaction.find({ userId: req._id })
+    .select("_id tourId grossAmount transactionTime transactionStatus isTransactionFinished")
+    .populate("tourId", "tourName touAddress tourDuration tourStops tourPoints")
+    .then((transactions) => {
+      res.status(200).json({
+        message: "Success get all transactions",
+        transactions: transactions
+      });
+    })
+    .catch((err) => {
+      return res.status(500).json({
+        message: "Failed to fetch transactions",
+        err: err
+      });
+    });
+};
+
+/*
   DESC        : Create transaction with empty payment
   PARAMS      : tourId
   METHOD      : POST
