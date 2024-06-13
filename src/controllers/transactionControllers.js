@@ -103,6 +103,13 @@ exports.createPayment = async (req, res) => {
       });
     }
 
+    if(transaction.transactionQr !== " ") {
+      return res.status(202).json({
+        message: "Payment already created",
+        qrLink: transaction.transactionQr
+      });
+    }
+
     const parameter = {
       payment_type: "qris",
       transaction_details: {
@@ -120,7 +127,8 @@ exports.createPayment = async (req, res) => {
         transaction.save().then(() => {
           return res.status(200).json({
             message: "Payment created successfully",
-            response: response
+            response: response,
+            qrLink: response.actions[0].url
           });
         });
       })
@@ -166,7 +174,7 @@ exports.checkPayment = async (req, res) => {
               response: response
             });
           } else {
-            return res.status(402).json({
+            return res.status(202).json({
               message: "Payment pending! Please complete payment!",
               response: response
             });
