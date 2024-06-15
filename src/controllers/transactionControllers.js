@@ -177,7 +177,8 @@ exports.checkPayment = async (req, res) => {
               .then(() => {
                 return res.status(200).json({
                   message: "Payment success!",
-                  response: response
+                  paymentStatus: "paid",
+                  response: response,
                 });
               })
               .catch((err) => {
@@ -191,11 +192,13 @@ exports.checkPayment = async (req, res) => {
           ) {
             return res.status(202).json({
               message: "Payment expired! Please create new payment!",
+              paymentStatus: "expired",
               response: response
             });
           } else {
             return res.status(202).json({
               message: "Payment pending! Please complete payment!",
+              paymentStatus: "waiting",
               response: response
             });
           }
