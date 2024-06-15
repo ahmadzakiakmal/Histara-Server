@@ -232,7 +232,7 @@ exports.finishTransaction = async (req, res) => {
           message: "Transaction not found"
         });
       } else if (transaction.isTransactionFinished === true) {
-        return res.status(406).json({
+        return res.status(202).json({
           message: "Transaction already finished"
         });
       }
