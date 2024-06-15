@@ -16,7 +16,10 @@ exports.getAllTransactions = async (req, res) => {
     .select(
       "_id tourId grossAmount transactionTime transactionStatus isTransactionFinished"
     )
-    .populate("tourId", "tourName tourAddress tourDuration tourStops tourPoints")
+    .populate(
+      "tourId",
+      "tourName tourAddress tourDuration tourStops tourPoints"
+    )
     .then((transactions) => {
       const formattedTransactions = transactions.map((transaction) => {
         const { tourId, ...rest } = transaction.toObject();
@@ -103,7 +106,7 @@ exports.createPayment = async (req, res) => {
       });
     }
 
-    if(transaction.transactionQr !== " ") {
+    if (transaction.transactionQr !== " ") {
       return res.status(202).json({
         message: "Payment already created",
         qrLink: transaction.transactionQr
@@ -163,14 +166,31 @@ exports.checkPayment = async (req, res) => {
       .status(orderId)
       .then((response) => {
         transaction.transactionStatus = response.transaction_status;
-        transaction.transactionTime = response.settlement_time;
         transaction.save().then(() => {
           if (
             response.transaction_status === "settlement" ||
             response.transaction_status === "capture"
           ) {
-            return res.status(200).json({
-              message: "Payment success!",
+            transaction.transactionTime = response.settlement_time;
+            transaction
+              .save()
+              .then(() => {
+                return res.status(200).json({
+                  message: "Payment success!",
+                  response: response
+                });
+              })
+              .catch((err) => {
+                return res.status(500).json({
+                  message: "Failed to check payment",
+                  err: err.message
+                });
+              });
+          } else if (
+            response.transaction_status === "expire" 
+          ) {
+            return res.status(202).json({
+              message: "Payment expired! Please create new payment!",
               response: response
             });
           } else {
