@@ -44,8 +44,14 @@ const userSchema = new mongoose.Schema({
     required: true
   },
   profilePicture: {
-    type: String,
-    default: ""
+    type: Number,
+    default: 1,
+    enum: [
+      1,
+      2,
+      3,
+      4
+    ],
   },
   password: {
     type: String,

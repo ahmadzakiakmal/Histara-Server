@@ -146,11 +146,10 @@ exports.editUser = (req, res) => {
 
   if (
     "password" in updates ||
-    "salt" in updates ||
-    "profilePicture" in updates
+    "salt" in updates
   ) {
     return res.status(400).json({
-      message: "Field cannot be updated!"
+      message: "Field cannot be updated or changed!"
     });
   }
 
