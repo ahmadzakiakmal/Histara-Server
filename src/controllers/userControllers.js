@@ -172,3 +172,34 @@ exports.editUser = (req, res) => {
       });
     });
 };
+
+/*
+  DESC        : Get user details
+  PARAMS      : -
+  METHOD      : GET
+  VISIBILITY  : Private
+  PRE-REQ     : ensureAuthenticated middleware
+  RESPONSE    : -
+*/
+exports.getUserDetails = (req, res) => {
+  User.findOne({ _id: req._id })
+    .select("-password -salt -_id")
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found"
+        });
+      }
+
+      res.status(200).json({
+        message: "User details fetched successfully",
+        user
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({
+        message: "Internal server error",
+        error
+      });
+    });
+};
