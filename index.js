@@ -36,6 +36,9 @@ mongoose.connect(process.env.MONGO_URI)
 app.get("/", (req, res) => {
   res.send("Histara Server");
 });
+app.get("/version", (req, res)  => {
+  res.send("1.0.0");
+});
 app.use("/v1/user", require("./src/routes/userRoutes"));
 app.use("/v1/transaction", require("./src/routes/transactionRoutes"));
 app.use("/v1/tour", require("./src/routes/tourRoutes"));
