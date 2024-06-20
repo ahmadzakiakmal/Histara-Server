@@ -279,3 +279,49 @@ exports.finishTransaction = async (req, res) => {
         });
     });
 };
+
+exports.cancelTransaction = (req, res) => {
+  const { orderId } = req.query;
+
+  Transaction.findOne({ _id: orderId })
+    .then((transaction) => {
+      if (!transaction) {
+        return res.status(404).json({
+          message: "Transaction not found"
+        });
+      }
+
+      if (transaction.transactionStatus == "cancel") {
+        return res.status(202).json({
+          message: "Transaction already cancelled",
+          paymentStatus: "cancel",
+        });
+      }
+
+      midtransCoreApi.transaction
+        .cancel(orderId)
+        .then((response) => {
+          transaction.transactionStatus = response.transaction_status;
+          transaction.isTransactionFinished = true;
+          transaction.save().then(() => {
+            return res.status(200).json({
+              message: "Payment cancelled successfully",
+              paymentStatus: "cancel",
+              response: response
+            });
+          });
+        })
+        .catch((err) => {
+          return res.status(500).json({
+            message: "Failed to cancel payment",
+            err: err.message
+          });
+        });
+    })
+    .catch((err) => {
+      return res.status(500).json({
+        message: "Failed to cancel payment",
+        err: err
+      });
+    });
+};
