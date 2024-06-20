@@ -281,48 +281,65 @@ exports.finishTransaction = async (req, res) => {
     });
 };
 
-exports.cancelTransaction = (req, res) => {
+/*
+  DESC        : Cancel transaction
+  PARAMS      : orderId
+  METHOD      : PUT
+  VISIBILITY  : Private
+  PRE-REQ     : -
+  RESPONSE    : -
+*/
+exports.cancelTransaction = async (req, res) => {
   const { orderId } = req.query;
 
-  Transaction.findOne({ _id: orderId })
-    .then((transaction) => {
-      if (!transaction) {
-        return res.status(404).json({
-          message: "Transaction not found"
-        });
-      }
+  try {
+    const transaction = await Transaction.findOne({ _id: orderId });
 
-      if (transaction.transactionStatus == "cancel") {
-        return res.status(202).json({
-          message: "Transaction already cancelled",
-          paymentStatus: "cancel",
-        });
-      }
-
-      midtransCoreApi.transaction
-        .cancel(orderId)
-        .then((response) => {
-          transaction.transactionStatus = response.transaction_status;
-          transaction.isTransactionFinished = true;
-          transaction.save().then(() => {
-            return res.status(200).json({
-              message: "Payment cancelled successfully",
-              paymentStatus: "cancel",
-              response: response
-            });
-          });
-        })
-        .catch((err) => {
-          return res.status(500).json({
-            message: "Failed to cancel payment",
-            err: err.message
-          });
-        });
-    })
-    .catch((err) => {
-      return res.status(500).json({
-        message: "Failed to cancel payment",
-        err: err
+    if (!transaction) {
+      return res.status(404).json({
+        message: "Transaction not found"
       });
+    }
+
+    if (transaction.transactionStatus === "cancel") {
+      return res.status(202).json({
+        message: "Transaction already cancelled",
+        paymentStatus: "cancel",
+      });
+    } else if (transaction.transactionStatus === "settlement") {
+      return res.status(202).json({
+        message: "Transaction already paid",
+        paymentStatus: "paid",
+      });
+    } else if (transaction.transactionStatus === "expire") {
+      return res.status(202).json({
+        message: "Transaction already expired",
+        paymentStatus: "expire",
+      });
+    } else if (transaction.transactionQr === " ") {
+      transaction.transactionStatus = "cancel";
+      transaction.isTransactionFinished = true;
+      await transaction.save();
+      return res.status(202).json({
+        message: "Transaction cancelled successfully",
+        paymentStatus: "cancel",
+      });
+    }
+
+    const response = await midtransCoreApi.transaction.cancel(orderId);
+    transaction.transactionStatus = response.transaction_status;
+    transaction.isTransactionFinished = true;
+    await transaction.save();
+    return res.status(200).json({
+      message: "Payment cancelled successfully",
+      paymentStatus: "cancel",
+      response: response
     });
+
+  } catch (err) {
+    return res.status(500).json({
+      message: "Failed to cancel payment",
+      err: err.message
+    });
+  }
 };
