@@ -18,7 +18,7 @@ exports.getAllTransactions = async (req, res) => {
     )
     .populate(
       "tourId",
-      "tourName tourAddress tourDuration tourStops tourPoints"
+      "tourName tourAddress tourDuration tourStops tourPoints toursId"
     )
     .then((transactions) => {
       const formattedTransactions = transactions.map((transaction) => {
@@ -30,7 +30,8 @@ exports.getAllTransactions = async (req, res) => {
           tourPoints: tourId.tourPoints,
           tourDuration: tourId.tourDuration,
           tourStops: tourId.tourStops,
-          tourAddress: tourId.tourAddress
+          tourAddress: tourId.tourAddress,
+          toursId: tourId.toursId
         };
       });
 

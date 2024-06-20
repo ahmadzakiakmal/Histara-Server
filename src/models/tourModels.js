@@ -5,6 +5,10 @@ const tourSchema = new mongoose.Schema({
     type: String,
     unique: true
   },
+  toursId: {
+    type: String,
+    required: true
+  },
   tourDescription: {
     type: String,
     required: true
