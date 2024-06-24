@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 exports.midtransCoreApi = new midtransClient.CoreApi({
-  isProduction: false,
+  isProduction: true,
   serverKey: process.env.MIDTRANS_SERVER_KEY,
   clientKey: process.env.MIDTRANS_CLIENT_KEY,
 });
