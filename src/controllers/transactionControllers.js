@@ -90,6 +90,42 @@ exports.createTransaction = async (req, res) => {
 };
 
 /*
+  DESC        : Confirm payment
+  PARAMS      : tourId
+  METHOD      : POST
+  VISIBILITY  : Private
+  PRE-REQ     : -
+  RESPONSE    : -
+*/
+exports.confirmPayment = async (req, res) => {
+  const { orderId } = req.body;
+
+  Transaction.findOne({ _id: orderId }).then((transaction) => {
+    if (!transaction) {
+      return res.status(404).json({
+        message: "Transaction not found"
+      });
+    }
+
+    transaction.transaction_status === "capture";
+    transaction
+      .save()
+      .then(() => {
+        return res.status(200).json({
+          message: "Payment confirmed successfully"
+        });
+      })
+
+      .catch((err) => {
+        return res.status(500).json({
+          message: "Failed to confirm payment",
+          err: err.message
+        });
+      });
+  });
+};
+
+/*
   DESC        : Create payment for transaction
   PARAMS      : orderId
   METHOD      : POST
@@ -179,7 +215,7 @@ exports.checkPayment = async (req, res) => {
                 return res.status(200).json({
                   message: "Payment success!",
                   paymentStatus: "paid",
-                  response: response,
+                  response: response
                 });
               })
               .catch((err) => {
@@ -188,9 +224,7 @@ exports.checkPayment = async (req, res) => {
                   err: err.message
                 });
               });
-          } else if (
-            response.transaction_status === "expire" 
-          ) {
+          } else if (response.transaction_status === "expire") {
             return res.status(202).json({
               message: "Payment expired! Please create new payment!",
               paymentStatus: "expired",
@@ -304,17 +338,17 @@ exports.cancelTransaction = async (req, res) => {
     if (transaction.transactionStatus === "cancel") {
       return res.status(202).json({
         message: "Transaction already cancelled",
-        paymentStatus: "cancel",
+        paymentStatus: "cancel"
       });
     } else if (transaction.transactionStatus === "settlement") {
       return res.status(202).json({
         message: "Transaction already paid",
-        paymentStatus: "paid",
+        paymentStatus: "paid"
       });
     } else if (transaction.transactionStatus === "expire") {
       return res.status(202).json({
         message: "Transaction already expired",
-        paymentStatus: "expire",
+        paymentStatus: "expire"
       });
     } else if (transaction.transactionQr === " ") {
       transaction.transactionStatus = "cancel";
@@ -322,7 +356,7 @@ exports.cancelTransaction = async (req, res) => {
       await transaction.save();
       return res.status(202).json({
         message: "Transaction cancelled successfully",
-        paymentStatus: "cancel",
+        paymentStatus: "cancel"
       });
     }
 
@@ -335,7 +369,6 @@ exports.cancelTransaction = async (req, res) => {
       paymentStatus: "cancel",
       response: response
     });
-
   } catch (err) {
     return res.status(500).json({
       message: "Failed to cancel payment",
